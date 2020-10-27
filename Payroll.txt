@@ -26,16 +26,39 @@ INSERT INTO employee_payroll (name,salary,start) VALUES
 	( 'Charlie', 300.00, '2020-05-21' );
 
 
-
 UC4 :
 
 SELECT * FROM employee_payroll; 				
 
++----+---------+--------+------------+
+| id | name    | salary | start      |
++----+---------+--------+------------+
+|  1 | Bill    |    100 | 2018-01-03 |
+|  2 | Terisa  |    200 | 2019-11-13 |
+|  3 | Charlie |    300 | 2020-05-21 |
++----+---------+--------+------------+
+3 rows in set (0.0006 sec)
 
 UC5 :
 
 SELECT salary from employee_payroll WHERE name = 'Bill';	
++--------+
+| salary |
++--------+
+|    100 |
++--------+
+1 row in set (0.0007 sec)
+
 SELECT * FROM employee_payroll WHERE start BETWEEN CAST('2018-01-01' AS DATE) AND DATE(NOW());
+
++----+---------+--------+------------+
+| id | name    | salary | start      |
++----+---------+--------+------------+
+|  1 | Bill    |    100 | 2018-01-03 |
+|  2 | Terisa  |    200 | 2019-11-13 |
+|  3 | Charlie |    300 | 2020-05-21 |
++----+---------+--------+------------+
+3 rows in set (0.0467 sec)
 
 
 UC6 : 
@@ -43,13 +66,68 @@ UC6 :
 ALTER TABLE employee_payroll ADD gender CHAR(1) AFTER name; 	
 UPDATE employee_payroll set gender = 'F' where name = 'Terisa';
 UPDATE employee_payroll set gender = 'M' where name = 'Bill' or name = 'CHARLIE';
+SELECT * FROM employee_payroll;
++----+---------+--------+--------+------------+
+| id | name    | gender | salary | start      |
++----+---------+--------+--------+------------+
+|  1 | Bill    | M      |    100 | 2018-01-03 |
+|  2 | Terisa  | F      |    200 | 2019-11-13 |
+|  3 | Charlie | M      |    300 | 2020-05-21 |
++----+---------+--------+--------+------------+
+3 rows in set (0.0006 sec)
 
 
 UC7 :
 
 SELECT AVG(salary) FROM employee_payroll WHERE gender = 'M' GROUP BY gender; 	
++-------------+
+| AVG(salary) |
++-------------+
+|         200 |
++-------------+
+1 row in set (0.0178 sec)
+
 SELECT gender, AVG(salary) FROM employee_payroll GROUP BY gender;
++--------+-------------+
+| gender | AVG(salary) |
++--------+-------------+
+| M      |         200 |
+| F      |         200 |
++--------+-------------+
+2 rows in set (0.0340 sec)
+
 SELECT gender, COUNT(name) FROM employee_payroll GROUP BY gender;
++--------+-------------+
+| gender | COUNT(name) |
++--------+-------------+
+| M      |           2 |
+| F      |           1 |
++--------+-------------+
+2 rows in set (0.0010 sec)
+
 SELECT gender, SUM(salary) FROM employee_payroll GROUP BY gender;
++--------+-------------+
+| gender | SUM(salary) |
++--------+-------------+
+| M      |         400 |
+| F      |         200 |
++--------+-------------+
+2 rows in set (0.0006 sec)
+
 SELECT gender, MIN(salary) FROM employee_payroll GROUP BY gender;
++--------+-------------+
+| gender | MIN(salary) |
++--------+-------------+
+| M      |         100 |
+| F      |         200 |
++--------+-------------+
+2 rows in set (0.0008 sec)
+
 SELECT gender, MAX(salary) FROM employee_payroll GROUP BY gender;
++--------+-------------+
+| gender | MAX(salary) |
++--------+-------------+
+| M      |         300 |
+| F      |         200 |
++--------+-------------+
+2 rows in set (0.0007 sec)

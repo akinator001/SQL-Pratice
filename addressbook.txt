@@ -1,0 +1,187 @@
+uc1:
+
+CREATE DATABASE addressbook_service; 
+USE addressbook_service; 
+SELECT DATABASE(); 
++---------------------+
+| DATABASE()          |
++---------------------+
+| addressbook_service |
++---------------------+
+1 row in set (0.0003 sec)
+
+uc2: 
+
+ CREATE TABLE addressbook(                                                                                           
+ first_name  VARCHAR(50) NOT NULL,                                                                                    
+ last_name   VARCHAR(50) NOT NULL,                                                                                     
+ address     VARCHAR(50) NOT NULL,                                                                                       
+ city        VARCHAR(50) NOT NULL,                                                                                          
+ state       VARCHAR(50) NOT NULL,                                                                                         
+ zip         INT unsigned NOT NULL,                                                                                            
+ phone       INT NOT NULL,                                                                                         
+ email       VARCHAR(50) NOT NULL                                                                                          
+ );
+ 
+DESCRIBE addressbook; 
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| first_name | varchar(50)  | NO   |     | NULL    |       |
+| last_name  | varchar(50)  | NO   |     | NULL    |       |
+| address    | varchar(50)  | NO   |     | NULL    |       |
+| city       | varchar(50)  | NO   |     | NULL    |       |
+| state      | varchar(50)  | NO   |     | NULL    |       |
+| zip        | int unsigned | NO   |     | NULL    |       |
+| phone      | int          | NO   |     | NULL    |       |
+| email      | varchar(50)  | NO   |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+8 rows in set (0.0613 sec)
+
+uc3: 
+
+ INSERT INTO addressbook VALUES 
+('aakash','gandhi','sector 14','panipat','haryana','123456','987654321','aakash@gmail.com'),
+('nik','singh','alpha 2',' greater noida','up','741147','7858585858','nik@gmail.com'), 
+('arpit','kaur','beta 1','greater noida','up','741147','9898363283','arpit@gmail.com'), 
+('adi','pandat','emirates','jodhpur','rajasthan','654321','8787843527','adi@gmail.com');
+
+SELECT * from addressbook;
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+
+| first_name | last_name | address   | city          | state     | zip    | phone     | email            |
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+
+| aakash     | gandhi    | sector 14 | panipat       | haryana   | 123456 | 987654321 | aakash@gmail.com |
+| nik        | singh     | alpha 2   | greater noida | up        | 741147 |  76543210 | nik@gmail.com    |
+| arpit      | kaur      | beta 1    | greater noida | up        | 741147 |   9893283 | arpit@gmail.com  |
+| adi        | pandat    | emirates  | jodhpur       | rajasthan | 654321 |   8787843 | adi@gmail.com    |
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+
+4 rows in set (0.0194 sec)
+
+uc4:
+
+ UPDATE addressbook SET city = 'gurugram' WHERE first_name ='nik';
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+
+| first_name | last_name | address   | city          | state     | zip    | phone     | email            |
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+
+| aakash     | gandhi    | sector 14 | panipat       | haryana   | 123456 | 987654321 | aakash@gmail.com |
+| nik        | singh     | alpha 2   | gurugram      | up        | 741147 |  76543210 | nik@gmail.com    |
+| arpit      | kaur      | beta 1    | greater noida | up        | 741147 |   9893283 | arpit@gmail.com  |
+| adi        | pandat    | emirates  | jodhpur       | rajasthan | 654321 |   8787843 | adi@gmail.com    |
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+
+4 rows in set (0.0761 sec)
+
+
+uc5:
+
+DELETE FROM addressbook WHERE first_name = 'adi'; 
++------------+-----------+-----------+---------------+---------+--------+-----------+------------------+
+| first_name | last_name | address   | city          | state   | zip    | phone     | email            |
++------------+-----------+-----------+---------------+---------+--------+-----------+------------------+
+| aakash     | gandhi    | sector 14 | panipat       | haryana | 123456 | 987654321 | aakash@gmail.com |
+| nik        | singh     | alpha 2   | gurugram      | haryana | 741147 |  76543210 | nik@gmail.com    |
+| arpit      | kaur      | beta 1    | greater noida | up      | 741147 |   9893283 | arpit@gmail.com  |
++------------+-----------+-----------+---------------+---------+--------+-----------+------------------+
+3 rows in set (0.0346 sec)
+
+uc6:
+
+
+SELECT * FROM addressbook WHERE city = 'greater noida'; 
++------------+-----------+---------+---------------+-------+--------+---------+-----------------+
+| first_name | last_name | address | city          | state | zip    | phone   | email           |
++------------+-----------+---------+---------------+-------+--------+---------+-----------------+
+| arpit      | kaur      | beta 1  | greater noida | up    | 741147 | 9893283 | arpit@gmail.com |
++------------+-----------+---------+---------------+-------+--------+---------+-----------------+
+1 row in set (0.0007 sec)
+
+
+SELECT * FROM addressbook WHERE state = 'haryana'; 
++------------+-----------+-----------+----------+---------+--------+-----------+------------------+
+| first_name | last_name | address   | city     | state   | zip    | phone     | email            |
++------------+-----------+-----------+----------+---------+--------+-----------+------------------+
+| aakash     | gandhi    | sector 14 | panipat  | haryana | 123456 | 987654321 | aakash@gmail.com |
+| nik        | singh     | alpha 2   | gurugram | haryana | 741147 |  76543210 | nik@gmail.com    |
++------------+-----------+-----------+----------+---------+--------+-----------+------------------+
+2 rows in set (0.0005 sec)
+
+
+uc7:
+
+ SELECT city,COUNT(city) FROM addressbook GROUP BY city;
++---------------+-------------+
+| city          | COUNT(city) |
++---------------+-------------+
+| panipat       |           1 |
+| gurugram      |           1 |
+| greater noida |           1 |
++---------------+-------------+
+3 rows in set (0.0010 sec)
+
+
+SELECT state,COUNT(state) FROM addressbook GROUP BY state;
++---------+--------------+
+| state   | COUNT(state) |
++---------+--------------+
+| haryana |            2 |
+| up      |            1 |
++---------+--------------+
+2 rows in set (0.0012 sec)
+
+
+uc8:
+
+SELECT * FROM addressbook WHERE city = 'greater noida' ORDER BY first_name;
++------------+-----------+---------+---------------+-------+--------+---------+-----------------+
+| first_name | last_name | address | city          | state | zip    | phone   | email           |
++------------+-----------+---------+---------------+-------+--------+---------+-----------------+
+| arpit      | kaur      | beta 1  | greater noida | up    | 741147 | 9893283 | arpit@gmail.com |
++------------+-----------+---------+---------------+-------+--------+---------+-----------------+
+1 row in set (0.0296 sec)
+
+
+uc9:
+
+ALTER TABLE addressbook ADD name VARCHAR(50); 
+ALTER TABLE addressbook ADD type VARCHAR(50); 
+DESCRIBE addressbook;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| first_name | varchar(50)  | NO   |     | NULL    |       |
+| last_name  | varchar(50)  | NO   |     | NULL    |       |
+| address    | varchar(50)  | NO   |     | NULL    |       |
+| city       | varchar(50)  | NO   |     | NULL    |       |
+| state      | varchar(50)  | NO   |     | NULL    |       |
+| zip        | int unsigned | NO   |     | NULL    |       |
+| phone      | int          | NO   |     | NULL    |       |
+| email      | varchar(50)  | NO   |     | NULL    |       |
+| name       | varchar(50)  | YES  |     | NULL    |       |
+| type       | varchar(50)  | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+10 rows in set (0.0984 sec)
+
+INSERT INTO addressbook VALUES ('riya','gupta','sector 42','bangalore','karnataka','565656','89596847','riya@gmail.com',NULL,'Friend');
+SELECT * from addressbook;
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+------+------------+
+| first_name | last_name | address   | city          | state     | zip    | phone     | email            | name | type       |
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+------+------------+
+| aakash     | gandhi    | sector 14 | panipat       | haryana   | 123456 | 987654321 | aakash@gmail.com | NULL | Family     |
+| nik        | singh     | alpha 2   | gurugram      | haryana   | 741147 |  76543210 | nik@gmail.com    | NULL | Family     |
+| arpit      | kaur      | beta 1    | greater noida | up        | 741147 |   9893283 | arpit@gmail.com  | NULL | Profession |
+| riya       | gupta     | sector 42 | bangalore     | karnataka | 565656 |  89596847 | riya@gmail.com   | NULL | Friend     |
++------------+-----------+-----------+---------------+-----------+--------+-----------+------------------+------+------------+
+4 rows in set (0.0007 sec)
+
+
+uc10:
+
+SELECT type, COUNT(type) FROM addressbook GROUP BY type;
++------------+-------------+
+| type       | COUNT(type) |
++------------+-------------+
+| Family     |           2 |
+| Profession |           1 |
+| Friend     |           1 |
++------------+-------------+
+3 rows in set (0.0007 sec)
+
