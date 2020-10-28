@@ -131,3 +131,205 @@ SELECT gender, MAX(salary) FROM employee_payroll GROUP BY gender;
 | F      |         200 |
 +--------+-------------+
 2 rows in set (0.0007 sec)
+
+
+uc8:
+
+ALTER TABLE employee_payroll ADD phone_number VARCHAR(250) AFTER name;
+ALTER TABLE employee_payroll ADD address VARCHAR(250) AFTER phone_number;
+ALTER TABLE employee_payroll ADD department VARCHAR(250) NOT NULL AFTER address;
+ALTER TABLE employee_payroll CHANGE COLUMN address address  VARCHAR(250) DEFAULT 'TB';
+DESCRIBE employee_payroll;
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| id           | int          | NO   | PRI | NULL    | auto_increment |
+| name         | varchar(150) | NO   |     | NULL    |                |
+| phone_number | varchar(250) | YES  |     | NULL    |                |
+| address      | varchar(250) | YES  |     | TB      |                |
+| department   | varchar(250) | NO   |     | NULL    |                |
+| gender       | char(1)      | YES  |     | NULL    |                |
+| salary       | double       | NO   |     | NULL    |                |
+| start        | date         | NO   |     | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+8 rows in set (0.1064 sec)
+
+
+uc9:
+
+ALTER TABLE employee_payroll RENAME COLUMN salary TO basic_pay;
+ALTER TABLE employee_payroll ADD deductions Double NOT NULL AFTER basic_pay;
+ALTER TABLE employee_payroll ADD taxable_pay Double NOT NULL AFTER deductions;
+ALTER TABLE employee_payroll ADD tax Double NOT NULL AFTER taxable_pay;
+ALTER TABLE employee_payroll ADD net_pay Double NOT NULL AFTER tax;
+DESCRIBE employee_payroll;
+
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| id           | int          | NO   | PRI | NULL    | auto_increment |
+| name         | varchar(150) | NO   |     | NULL    |                |
+| phone_number | varchar(250) | YES  |     | NULL    |                |
+| address      | varchar(250) | YES  |     | TB      |                |
+| department   | varchar(250) | NO   |     | NULL    |                |
+| gender       | char(1)      | YES  |     | NULL    |                |
+| basic_pay    | double       | NO   |     | NULL    |                |
+| deductions   | double       | NO   |     | NULL    |                |
+| taxable_pay  | double       | NO   |     | NULL    |                |
+| tax          | double       | NO   |     | NULL    |                |
+| net_pay      | double       | NO   |     | NULL    |                |
+| start        | date         | NO   |     | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+12 rows in set (0.0899 sec)
+
+
+uc10:
+
+UPDATE employee_payroll set department = 'Sales' WHERE name = 'Terisa';
+INSERT INTO employee_payroll(name, department, gender, basic_pay, deductions, taxable_pay, tax, net_pay, start) VALUES
+('Terisa','Marketing','F',400.0,200.0,300.0,600.0,260.0,'2018-01-03');
+SELECT * from employee_payroll;
+
++----+---------+--------------+---------+------------+--------+-----------+------------+-------------+-----+---------+------------+
+| id | name    | phone_number | address | department | gender | basic_pay | deductions | taxable_pay | tax | net_pay | start      |
++----+---------+--------------+---------+------------+--------+-----------+------------+-------------+-----+---------+------------+
+|  1 | Bill    | NULL         | NULL    |            | M      |       100 |          0 |           0 |   0 |       0 | 2018-01-03 |
+|  2 | Terisa  | NULL         | NULL    | Sales      | F      |       200 |          0 |           0 |   0 |       0 | 2019-11-13 |
+|  3 | Charlie | NULL         | NULL    |            | M      |       300 |          0 |           0 |   0 |       0 | 2020-05-21 |
+|  4 | Terisa  | NULL         | TB      | Marketing  | F      |       400 |        200 |         300 | 600 |     260 | 2018-01-03 |
++----+---------+--------------+---------+------------+--------+-----------+------------+-------------+-----+---------+------------+
+4 rows in set (0.0284 sec)
+
+
+uc11:
+
+CREATE TABLE company(
+company_id      INT PRIMARY KEY,
+company_name    VARCHAR(250) NOT NULL
+);
+
+
+CREATE TABLE employee 					
+(
+ id 		INT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ company_id 	INT REFERENCES company(company_id),
+ name           VARCHAR(200) NOT NULL,
+ phone_number 	VARCHAR(20) NOT NULL,
+ address 	VARCHAR(50) NOT NULL DEFAULT 'TBD',
+ gender 	CHAR(1) NOT NULL
+);
+
+
+CREATE TABLE payroll
+(
+ id 	INT REFERENCES employee(id),
+ basic_pay 	DOUBLE NOT NULL,
+ deductions 	DOUBLE NOT NULL,
+ taxable_pay 	DOUBLE NOT NULL,
+ tax 		DOUBLE NOT NULL,
+ net_pay 	DOUBLE NOT NULL
+);
+
+
+CREATE TABLE department
+(
+ dept_id 	INT PRIMARY KEY,
+ dept_name 	VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE employee_department
+(
+ emp_id 	INT REFERENCES employee(id),
+ dept_id 	INT REFERENCES department(dept_id)
+);
+
+SHOW tables;
+
++---------------------------+
+| Tables_in_payroll_service |
++---------------------------+
+| company                   |
+| department                |
+| employee                  |
+| employee_department       |
+| employee_payroll          |
+| payroll                   |
++---------------------------+
+6 rows in set (0.0818 sec)
+
+
+uc12:
+
+INSERT INTO company VALUES 
+(1, "cap");
+
+SELECT * FROM company;
++------------+--------------+
+| company_id | company_name |
++------------+--------------+
+|          1 | cap          |
++------------+--------------+
+1 row in set (0.0007 sec)
+
+INSERT INTO employee(company_id, name, phone_number, address, gender) VALUES 
+(1, 'Bill', '9876543210', 'abc', 'M' ),
+(1, 'Terisa', '8665443211', 'bca', 'F' ),
+(1, 'Charlie', '9976543212', 'cab', 'M' ); 
+
+SELECT * FROM employee;
++----+------------+---------+--------------+---------+--------+
+| id | company_id | name    | phone_number | address | gender |
++----+------------+---------+--------------+---------+--------+
+|  1 |          1 | Bill    | 9876543210   | abc     | M      |
+|  2 |          1 | Terisa  | 8665443211   | bca     | F      |
+|  3 |          1 | Charlie | 9976543212   | cab     | M      |
++----+------------+---------+--------------+---------+--------+
+3 rows in set (0.0009 sec)
+
+INSERT INTO department VALUES
+(1,'Sales'),
+(2,'Marketing'),
+(3,'HR');
+
+SELECT * FROM department;
++---------+-----------+
+| dept_id | dept_name |
++---------+-----------+
+|       1 | Sales     |
+|       2 | Marketing |
+|       3 | HR        |
++---------+-----------+
+3 rows in set (0.0011 sec)
+
+
+INSERT INTO payroll VALUES 
+(1,6000,400,3500,700,8000),
+(2,9000,100,2400,400,2500),
+(3,7000,600,5500,900,3000);
+
+SELECT * FROM payroll;
++----+-----------+------------+-------------+-----+---------+
+| id | basic_pay | deductions | taxable_pay | tax | net_pay |
++----+-----------+------------+-------------+-----+---------+
+|  1 |      6000 |        400 |        3500 | 700 |    8000 |
+|  2 |      9000 |        100 |        2400 | 400 |    2500 |
+|  3 |      7000 |        600 |        5500 | 900 |    3000 |
++----+-----------+------------+-------------+-----+---------+
+3 rows in set (0.0009 sec)
+
+INSERT INTO employee_department VALUES
+(1,1),
+(2,1),
+(2,2),
+(3,3); 
+
+SELECT * FROM employee_department;
++--------+---------+
+| emp_id | dept_id |
++--------+---------+
+|      1 |       1 |
+|      2 |       1 |
+|      2 |       2 |
+|      3 |       3 |
++--------+---------+
+4 rows in set (0.0160 sec)
